@@ -1,19 +1,16 @@
 /* eslint-disable react/jsx-key */
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { Modal, Table, Button } from 'flowbite-react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Table, Modal, Button } from 'flowbite-react';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-
-
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
-  const [showMore, setShowMore ] = useState(true);
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState('');
-  console.log(userPosts);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -21,7 +18,7 @@ export default function DashPosts() {
         const data = await res.json();
         if (res.ok) {
           setUserPosts(data.posts);
-          if(data.post.length < 9) {
+          if (data.posts.length < 9) {
             setShowMore(false);
           }
         }
@@ -37,11 +34,13 @@ export default function DashPosts() {
   const handleShowMore = async () => {
     const startIndex = userPosts.length;
     try {
-      const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const res = await fetch(
+        `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
+      );
       const data = await res.json();
       if (res.ok) {
         setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 7) {
+        if (data.posts.length < 9) {
           setShowMore(false);
         }
       }
@@ -49,6 +48,7 @@ export default function DashPosts() {
       console.log(error.message);
     }
   };
+
   const handleDeletePost = async () => {
     setShowModal(false);
     try {
@@ -111,7 +111,7 @@ export default function DashPosts() {
                   </Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
                   <Table.Cell>
-                  <span
+                    <span
                       onClick={() => {
                         setShowModal(true);
                         setPostIdToDelete(post._id);
@@ -134,7 +134,12 @@ export default function DashPosts() {
             ))}
           </Table>
           {showMore && (
-            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">Show More</button>
+            <button
+              onClick={handleShowMore}
+              className='w-full text-teal-500 self-center text-sm py-7'
+            >
+              Show more
+            </button>
           )}
         </>
       ) : (
